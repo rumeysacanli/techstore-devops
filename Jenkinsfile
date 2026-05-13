@@ -8,15 +8,17 @@ pipeline {
         }
         stage('Setup & Test') {
             steps {
-                // Karmaşık venv işlemleri yerine doğrudan paketleri yükleyip test ediyoruz
-                sh 'pip install --upgrade pip'
-                sh 'pip install -r requirements.txt'
-                sh 'pytest tests/test_app.py -v'
+                // Sanal ortam oluşturup paketleri onun içine yüklüyoruz (En güvenli yol)
+                sh 'python3 -m venv venv'
+                sh './venv/bin/pip install --upgrade pip'
+                sh './venv/bin/pip install -r requirements.txt'
+                sh './venv/bin/pytest tests/test_app.py -v'
             }
         }
         stage('Docker Build') {
             steps {
-                sh 'docker build -t techstore-app:latest .'
+                // Uygulamanın Docker imajını oluşturma aşaması
+                sh 'docker build -t techstore-app:latest .' [cite: 61]
             }
         }
     }
