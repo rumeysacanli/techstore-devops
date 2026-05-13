@@ -1,22 +1,18 @@
 pipeline {
     agent any
     stages {
-        stage('Hazırlık') {
+        stage('Dosyalari Listele') {
             steps {
-                checkout scm
+                // Jenkins şu an nerede ve içinde ne var, hepsini göreceğiz
+                sh 'ls -R' 
             }
         }
-        stage('Testleri Koştur') {
+        stage('Test') {
             steps {
-                // Klasörün içine girip işlemleri orada yapıyoruz
+                // Eğer requirements.txt dosyan direkt ana dizindeyse bu komut çalışacak
                 sh 'python3 -m venv venv'
-                sh './venv/bin/pip install -r techstore-devops/requirements.txt'
-                sh './venv/bin/pytest techstore-devops/tests/test_app.py -v'
-            }
-        }
-        stage('Final') {
-            steps {
-                echo 'Pepline başarılı'
+                sh './venv/bin/pip install -r requirements.txt || ./venv/bin/pip install -r techstore-devops/techstore-devops/requirements.txt'
+                sh './venv/bin/pytest tests/test_app.py -v || ./venv/bin/pytest techstore-devops/techstore-devops/tests/test_app.py -v'
             }
         }
     }
